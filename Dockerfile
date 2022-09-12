@@ -4,7 +4,7 @@ FROM node:16.17.0
 RUN mkdir -p /usr/src/nuxt-app
 WORKDIR /usr/src/nuxt-app
 
-COPY package*.json ./
+COPY package.json /usr/src/nuxt-app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
