@@ -1,0 +1,45 @@
+version: "3.7"
+services:
+    # image project
+    nuxt-app:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        image:  nuxt-app
+        restart: always
+        working_dir: /usr/src/nuxt-app
+        command: 'npm run start'
+        networks:
+            - nuxt-app
+
+    # nginx
+    nginx:
+        image: nginx:alpine
+        restart: unless-stopped
+        ports:
+            - 80:80
+        volumes:
+            -   /usr/src/nuxt-app
+            - ./docker/nginx/:/etc/nginx/conf.d/
+        networks:
+            - nuxt-app
+
+    # db mysql
+    mysql:
+        image: mysql:5.7.22
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: "Nuxt_db"
+            MYSQL_ROOT_PASSWORD: "senhadb"
+            MYSQL_PASSWORD: "senhadb"
+            MYSQL_USER: "gabriel"
+        volumes:
+            - ./.docker/mysql/dbdata:/var/lib/mysql
+        ports:
+            - 3388:3306
+        networks:
+            - nuxt-app
+
+networks:
+    nuxt-app:
+        driver: bridge
